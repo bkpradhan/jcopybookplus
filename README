@@ -1,0 +1,6 @@
+JCopybookPlus,
+a XML/Cobol CopyBook marshaller/unmarshaller written in Java
+OSGI and Maven ready.
+
+Author: Bijaya Kumar Pradhan <bpradhan.developer@gmail.com>
+Forked from: https://github.com/miolini/jcopybook

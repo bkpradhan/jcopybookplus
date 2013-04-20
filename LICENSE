@@ -1,0 +1,31 @@
+JCopybookPlus, a XML<->COBOL CopyBook lib written in Java.
+Copyright (C) 2013-2013 Bijaya Kumar Pradhan <bpradhan.developer@gmail.com> and
+others.  All rights reserved.
+
+Jcopybook Author:
+Also thanks for author, from where this project was forked -
+Artem V. Andreenko <miolini@gmail.com> and associated commiters.
+
+Cb2XML Author:
+Also thanks for author, from this project was forked -
+Peter Thomas <ptrthomas@hotmail.com> and associated commiters.
+
+See the file "AUTHORS" for the name of all copyright holders.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this program in the file "COPYING-LESSER"; if not,
+write to the Free Software Foundation, Inc., 59 Temple Place,
+Suite 330, Boston, MA  02111-1307  USA
+
+The JCopybookPlus web site is located at:
+https://github.com/bkpradhan/jcopybookplus
