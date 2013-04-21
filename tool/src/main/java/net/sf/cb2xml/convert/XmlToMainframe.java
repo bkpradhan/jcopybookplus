@@ -38,6 +38,10 @@ public class XmlToMainframe {
 	public String convert(Document sourceDocument, Document copyBookXml) throws JCopybookException {
 		return new Marshaller(copyBookXml).process(sourceDocument);
 	}
+	
+	public byte[] convertToBytesBuffer(Document sourceDocument, Document copyBookXml) throws JCopybookException {
+		return new Marshaller(copyBookXml).processXmlAsBytes(sourceDocument);
+	}
 
 	private String convertOld(Document sourceDocument, Document copyBookXml) {
 		Element documentElement = sourceDocument.getDocumentElement();

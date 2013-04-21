@@ -6,6 +6,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class Marshaller {
 	private Document copybook;
 	private HashMap<String, Map<String, String>> meta;
+	private HashMap<Integer, byte[]> byteData;
 
 	public Marshaller() {
 	}
@@ -24,6 +26,7 @@ public class Marshaller {
 	public void setLayout(Document copybook) {
 		this.copybook = copybook;
 		meta = new HashMap<String, Map<String, String>>();
+		byteData = new HashMap<Integer, byte[]>();
 		analyze(copybook, meta);
 	}
 
@@ -38,6 +41,21 @@ public class Marshaller {
 		}
 	}
 
+	 public byte[] processXmlAsBytes(Document data) throws JCopybookMarshallException {
+		  StringBuilder out = new StringBuilder();
+		  try {
+		   iterate(data.getElementsByTagName("copybook").item(0), meta, out);
+		   byte[] buffer = out.toString().getBytes();
+		   for (Map.Entry<Integer, byte[]> set : byteData.entrySet()){
+		    System.arraycopy(set.getValue(), 0, buffer, set.getKey()-1, set.getValue().length);
+		   }
+		   return buffer;
+		  } catch (Exception e) {
+		   if (e instanceof JCopybookMarshallException) throw (JCopybookMarshallException) e;
+		   throw new JCopybookMarshallException("can't encode copybook xml to ascii string", e, XmlUtils.domToString(data).toString(), out.toString(), null, null, copybook);
+		  }
+	}
+	 
 	private void analyze(Node copybookNode, Map<String, Map<String, String>> meta) {
 		if (copybookNode.getAttributes() != null && copybookNode.getAttributes().getNamedItem("display-length") != null) {
 			Map<String, String> attrs = new HashMap<String, String>();
@@ -67,7 +85,11 @@ public class Marshaller {
 					value = node.getFirstChild() == null ? "" : node.getFirstChild().getNodeValue();
 					if (value == null) value = "";
 					value = value.replaceAll("[\\r\\n]+", "");
-					value = handleType(value, nodeMeta);
+					if (nodeMeta.containsKey("usage")) { //TODO check against a set of non pic x types instead
+						value = handleByteType(value, nodeMeta);
+					}else{
+						value = handleType(value, nodeMeta);
+					}
 					out.append(value);
 					return;
 				}
@@ -84,10 +106,35 @@ public class Marshaller {
 		}
 	}
 
+	
+	private String handleByteType(String value, Map<String, String> nodeMeta) {
+		  if (nodeMeta != null) {
+		   if (value.isEmpty() && "true".equals(nodeMeta.get("numeric"))) { // always numeric here?
+		    value ="0"; //BKP: Avoids NumberFormatException: Zero length values -  for empty tags of numeric types
+		   }
+		   
+		   int len = Integer.parseInt(nodeMeta.get("display-length"));
+		   if ("computational-3".equals(nodeMeta.get("usage"))){
+		    len = Integer.parseInt(nodeMeta.get("storage-length"));
+		    Integer pos = Integer.parseInt(nodeMeta.get("position"));
+		    byteData.put(pos, Utils.convertToBCD(value, len));
+		   }else if ("computational".equals(nodeMeta.get("usage")) || "binary".equals(nodeMeta.get("usage"))){
+		    len = len < 5 ? 2 : len < 10 ? 4 : 8;
+		    Integer pos = Integer.parseInt(nodeMeta.get("position"));
+		    byteData.put(pos, Utils.convertToBinary(value, len, ByteOrder.BIG_ENDIAN));
+		   }else{
+		    // exception
+		   }
+		   value = repeat("0", len); // to be replaced
+		  }
+		  return value;
+		 }
+	
 	public static String handleType(String value, Map<String, String> nodeMeta) {
 		if (nodeMeta != null) {
 			int len = Integer.parseInt(nodeMeta.get("display-length"));
 			if ("true".equals(nodeMeta.get("numeric"))) {
+				if (value.isEmpty()) { value = "0"; } //BKP: Avoids NumberFormatException: Zero length values -  for empty tags of numeric types
 				boolean negative = false;
 				if (nodeMeta.containsKey("scale")) {
 					double number = Double.parseDouble(value);
@@ -96,7 +143,7 @@ public class Marshaller {
 					value = String.format(Locale.ENGLISH, String.format("%%.%df", scale), number);
 					value = value.replaceAll("\\.", "");
 				} else {
-					int number = Integer.parseInt(value);
+					long number = Long.parseLong(value);
 					negative = number < 0;
 					String format = String.format("%%0%dd", len);
 					value = String.format(format, number);

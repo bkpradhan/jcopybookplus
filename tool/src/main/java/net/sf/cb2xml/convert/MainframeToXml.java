@@ -144,7 +144,7 @@ public class MainframeToXml {
 					text = textForNumeric;
 				}
 				context.offset += length;
-				Text textNode = resultDocument.createTextNode(text);
+				Text textNode = resultDocument.createTextNode(text.trim());
 				resultElement.appendChild(textNode);
 			}
 			return resultElement;
