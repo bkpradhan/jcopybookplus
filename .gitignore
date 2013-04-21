@@ -6,3 +6,5 @@ maven-plugin-example
 .DS_Store
 .project
 .settings
+.classpath
+tool/.classpath
