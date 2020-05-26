@@ -1,3 +1,4 @@
+package org.jcopybook;
 import net.sf.cb2xml.convert.MainframeToXml;
 import net.sf.cb2xml.util.FileUtils;
 import net.sf.cb2xml.util.XmlUtils;
