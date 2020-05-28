@@ -26,21 +26,29 @@ public class CopyBookComp3 {
     private int packedSize = 0;
     private boolean isSigned = true;
     protected byte[] result = null;
+    public static final String ZEROS_50="00000000000000000000000000000000000000000000000000";
 
     public static void main(String[] args) {
-        CopyBookComp3 comp3 = new CopyBookComp3("-123", 4, true);
+        String str = ".2";
+        int start = str.indexOf(".");
+        int end = str.length() - start -1;
+
+        String y = str+ZEROS_50.substring(0, 7 - end);
+        //String y = str+ZEROS_50.substring(0, 7 - str.length() - str.indexOf(".") -1);
+
+        CopyBookComp3 comp3 = new CopyBookComp3("-123", 4, 2, true);
         byte[] r = comp3.getBytes();  // use bytes to set field for copybook or write to file
 
         //hex for test only
         System.out.println("-123" + " ==> " + comp3.toDisplayString());
         System.out.println("-123" + " ==> " + comp3.toDisplayString(ByteOrder.LITTLE_ENDIAN));
 
-        comp3 = new CopyBookComp3("123", 4, true);
+        comp3 = new CopyBookComp3("8.2700000", 8, 7, false);
         r = comp3.getBytes();  // use bytes to set field for copybook or write to file
 
         //hex for test only
-        System.out.println("123" + " ==> " + comp3.toDisplayString());
-        System.out.println("123" + " ==> " + comp3.toDisplayString(ByteOrder.LITTLE_ENDIAN));
+        System.out.println("8.2700000" + " ==> " + comp3.toDisplayString());
+        System.out.println("8.2700000" + " ==> " + comp3.toDisplayString(ByteOrder.LITTLE_ENDIAN));
     }
 
     /**
@@ -51,8 +59,8 @@ public class CopyBookComp3 {
      * @return
      */
 
-    public CopyBookComp3(String value, int pictureSize) {
-        this(value, pictureSize, true);
+    public CopyBookComp3(String value, int digitsBefore, int digitsAfter) {
+        this(value, digitsBefore, digitsAfter, true);
     }
 
     /**
@@ -61,8 +69,9 @@ public class CopyBookComp3 {
      *
      * @return
      */
-    public CopyBookComp3(String value, int pictureSize, boolean signed) {
-        this(new BigInteger(value.contains(".") ? value.replaceAll("0+$", "").replaceAll("\\.", "") : value), pictureSize, signed);
+    public CopyBookComp3(String value, int digitsBefore, int digitsAfter, boolean signed) {
+        //String paddedValue = value.indexOf(".") > -1 ? rightPadZeros(value, digitsBefore + digitsAfter - value.indexOf(".")) : rightPadZeros(value, digitsAfter);
+        this(new BigInteger(rightPadZeros(value, digitsBefore, digitsAfter)), digitsBefore + digitsAfter , signed);
     }
 
     /**
@@ -95,8 +104,8 @@ public class CopyBookComp3 {
      * comp34 = new CopyBookComp3(new BigDecimal("1234.5678"), 8, true);
      * @return
      */
-    public CopyBookComp3(BigDecimal value, int pictureSize, boolean signed) {
-        this(value.stripTrailingZeros().toPlainString(), pictureSize, signed);
+    public CopyBookComp3(BigDecimal value, int digitsBefore, int digitsAfter, boolean signed) {
+        this(value.toPlainString(), digitsBefore, digitsAfter, signed);
     }
 
     /**
@@ -105,8 +114,8 @@ public class CopyBookComp3 {
      * defaults to signed pic
      * @return
      */
-    public CopyBookComp3(BigDecimal value, int pictureSize) {
-        this(value, pictureSize, true);
+    public CopyBookComp3(BigDecimal value, int digitsBefore, int digitsAfter) {
+        this(value, digitsBefore, digitsAfter, true);
     }
 
     public boolean isSigned() {
@@ -164,5 +173,26 @@ public class CopyBookComp3 {
 
     public String toDisplayString(ByteOrder endian) {
         return result == null ? null : encodeToHex(result, endian);
+    }
+
+    public static String repeat(String symb, int num) {
+        if ( num == 0 ){ return "" ; }
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            buf.append(symb);
+        }
+        return buf.toString();
+    }
+
+    public static String rightPadZeros(String str, int num) {
+        return String.format("%1$-" + num + "s", str).replace(' ', '0');
+    }
+
+    public static String rightPadZeros(String value, int digitsBefore, int digitsAfter) {
+        int start = value.indexOf(".");
+        int end = value.length() - start -1;
+        int pad = digitsAfter - end;
+        String result = value.contains(".") ? (value+ZEROS_50.substring(0, pad)).replaceAll("\\.", "") : value+repeat("0", digitsAfter);
+        return result;
     }
 }

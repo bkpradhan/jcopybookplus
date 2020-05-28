@@ -29,14 +29,14 @@ public class CopyBookComp extends CopyBookComp3 {
     private int pictureSize = 0;
 
     public static void main(String[] args) {
-        CopyBookComp comp = new CopyBookComp("-123", 4, true);
+        CopyBookComp comp = new CopyBookComp("-123", 4, 2, true);
         byte[] r = comp.getBytes();  // use bytes to set field for copybook or write to file
 
         //hex for test only
         System.out.println("-123" + " ==> " + comp.toDisplayString());
         System.out.println("-123" + " ==> " + comp.toDisplayString(ByteOrder.LITTLE_ENDIAN));
 
-        comp = new CopyBookComp("123", 4, true);
+        comp = new CopyBookComp("123", 4, 2,true);
         r = comp.getBytes();  // use bytes to set field for copybook or write to file
 
         //hex for test only
@@ -44,13 +44,13 @@ public class CopyBookComp extends CopyBookComp3 {
         System.out.println("123" + " ==> " + comp.toDisplayString(ByteOrder.LITTLE_ENDIAN));
     }
 
-    public CopyBookComp(String value, int pictureSize) {
-        this(value, pictureSize, true);
+    public CopyBookComp(String value, int digitsBefore, int digitsAfter) {
+        this(value, digitsBefore, digitsAfter, true);
     }
 
-    public CopyBookComp(String value, int pictureSize, boolean signed) {
-        super(value, pictureSize, signed);
-        this.pictureSize = pictureSize;
+    public CopyBookComp(String value, int digitsBefore, int digitsAfter, boolean signed) {
+        super(value, digitsBefore, digitsAfter, signed);
+        this.pictureSize = digitsBefore+digitsAfter;
     }
 
     public CopyBookComp(BigInteger value, int pictureSize, boolean signed) {
