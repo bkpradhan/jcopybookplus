@@ -182,7 +182,7 @@ public class CopyBookComp3 {
         int start = value.indexOf(".");
         int end = value.length() - start -1;
         int pad = digitsAfter - end;
-        String result = value.contains(".") ? (value+ZEROS_50.substring(0, pad)).replaceAll("\\.", "") : value.concat(new String(ZEROS_50.toCharArray(), 0, digitsAfter)); //+repeat("0", digitsAfter);
+        String result = value.contains(".") ? (value.concat(ZEROS_50.substring(0, pad))).replaceAll("\\.", "") : value.concat(ZEROS_50.substring(0, digitsAfter));
         return result;
     }
 }
