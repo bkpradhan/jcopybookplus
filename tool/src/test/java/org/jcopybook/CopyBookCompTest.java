@@ -34,18 +34,18 @@ public class CopyBookCompTest extends Assert {
             //hex for test only
             String hex = comp.toDisplayString();
             System.out.println(testValues[i] + " ==> " + hex);
-            assertEquals(hex, testResults[i]);
+            assertEquals(testResults[i], hex);
         }
 
     }
 
     @Test
     public void bigIntegerToComp() throws Exception {
-        String[] testValues = {"-1234", "1234", "+1234", "0000001234", "+1234"};
+        String[] testValues = {"-1234", "1234", "+1234", "0000001234", "2"};
         int[] testPicSize = {4, 4, 4, 4, 4};
         boolean[] signed = {true, true, true, false, false};
         // only for hex view, actual bytes to be written to output file is from comp.getBytes()
-        String[] testResults = {"fb2e", "04d2", "04d2", "04d2", "04d2"};
+        String[] testResults = {"fb2e", "04d2", "04d2", "04d2", "0002"};
 
         for (int i = 0; i < testPicSize.length; i++) {
             CopyBookComp comp = new CopyBookComp(new BigInteger(testValues[i]), testPicSize[i], signed[i]);
@@ -54,7 +54,7 @@ public class CopyBookCompTest extends Assert {
             //hex for test only
             String hex = comp.toDisplayString();
             System.out.println(testValues[i] + " ==> " + hex);
-            assertEquals(hex, testResults[i]);
+            assertEquals(testResults[i], hex);
         }
 
     }

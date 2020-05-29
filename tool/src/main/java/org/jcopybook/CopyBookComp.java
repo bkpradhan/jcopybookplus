@@ -44,6 +44,14 @@ public class CopyBookComp extends CopyBookComp3 {
         System.out.println("123" + " ==> " + comp.toDisplayString(ByteOrder.LITTLE_ENDIAN));
     }
 
+    public CopyBookComp(String value, int digitsBefore) {
+        this(value, digitsBefore, 0, true);
+    }
+
+    public CopyBookComp(String value, int digitsBefore, boolean signed) {
+        this(value, digitsBefore, 0, signed);
+    }
+
     public CopyBookComp(String value, int digitsBefore, int digitsAfter) {
         this(value, digitsBefore, digitsAfter, true);
     }

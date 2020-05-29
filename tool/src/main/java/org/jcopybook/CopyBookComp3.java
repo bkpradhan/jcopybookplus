@@ -29,12 +29,6 @@ public class CopyBookComp3 {
     public static final String ZEROS_50="00000000000000000000000000000000000000000000000000";
 
     public static void main(String[] args) {
-        String str = ".2";
-        int start = str.indexOf(".");
-        int end = str.length() - start -1;
-
-        String y = str+ZEROS_50.substring(0, 7 - end);
-        //String y = str+ZEROS_50.substring(0, 7 - str.length() - str.indexOf(".") -1);
 
         CopyBookComp3 comp3 = new CopyBookComp3("-123", 4, 2, true);
         byte[] r = comp3.getBytes();  // use bytes to set field for copybook or write to file
@@ -43,7 +37,7 @@ public class CopyBookComp3 {
         System.out.println("-123" + " ==> " + comp3.toDisplayString());
         System.out.println("-123" + " ==> " + comp3.toDisplayString(ByteOrder.LITTLE_ENDIAN));
 
-        comp3 = new CopyBookComp3("8.2700000", 8, 7, false);
+        comp3 = new CopyBookComp3("8.27", 8, 2, false);
         r = comp3.getBytes();  // use bytes to set field for copybook or write to file
 
         //hex for test only
@@ -105,7 +99,7 @@ public class CopyBookComp3 {
      * @return
      */
     public CopyBookComp3(BigDecimal value, int digitsBefore, int digitsAfter, boolean signed) {
-        this(value.toPlainString(), digitsBefore, digitsAfter, signed);
+        this(value.stripTrailingZeros().toPlainString(), digitsBefore, digitsAfter, signed);
     }
 
     /**
@@ -184,15 +178,11 @@ public class CopyBookComp3 {
         return buf.toString();
     }
 
-    public static String rightPadZeros(String str, int num) {
-        return String.format("%1$-" + num + "s", str).replace(' ', '0');
-    }
-
     public static String rightPadZeros(String value, int digitsBefore, int digitsAfter) {
         int start = value.indexOf(".");
         int end = value.length() - start -1;
         int pad = digitsAfter - end;
-        String result = value.contains(".") ? (value+ZEROS_50.substring(0, pad)).replaceAll("\\.", "") : value+repeat("0", digitsAfter);
+        String result = value.contains(".") ? (value+ZEROS_50.substring(0, pad)).replaceAll("\\.", "") : value.concat(new String(ZEROS_50.toCharArray(), 0, digitsAfter)); //+repeat("0", digitsAfter);
         return result;
     }
 }
