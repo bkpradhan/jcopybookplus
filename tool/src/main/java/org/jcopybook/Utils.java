@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.w3c.dom.Element;
@@ -11,7 +12,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Utils {
-
 	public static Element getFirstElement(Element documentElement) {
 		Object node = null;
 		NodeList childs = documentElement.getChildNodes();
@@ -88,4 +88,74 @@ public class Utils {
 		b = bf.array();
 		return b;
 	}
+
+
+	/*
+
+https://stackoverflow.com/questions/38046275/write-a-file-on-mainframe-server-with-ebcdic-and-packed-decimal-format
+
+package org.bkpradhan.jrecord;
+
+import net.sf.JRecord.Common.Constants;
+import net.sf.JRecord.Details.AbstractLine;
+import net.sf.JRecord.IO.AbstractLineWriter;
+import net.sf.JRecord.JRecordInterface1;
+import net.sf.JRecord.Types.Type;
+import net.sf.JRecord.def.IO.builders.IFixedWidthIOBuilder;
+import net.sf.JRecord.def.IO.builders.IIOBuilder;
+
+import java.io.IOException;
+
+public class FieldNamesDtar020 {
+
+    public static void main(String[] args) throws IOException {
+        IIOBuilder iob = FieldNamesDtar020.newIoBuilder();
+        AbstractLineWriter writer = iob.newWriter("/tmp/out_mf.txt");
+        AbstractLine line = iob.newLine();
+
+
+        line.getFieldValue(RECORD_DTAR020.keycodeNo).set("1235678");
+        line.getFieldValue(RECORD_DTAR020.storeNo).set(111);
+        line.getFieldValue(RECORD_DTAR020.date).set(222);
+        line.getFieldValue(RECORD_DTAR020.deptNo).set(222);
+        line.getFieldValue(RECORD_DTAR020.qtySold).set(1234);
+        line.getFieldValue(RECORD_DTAR020.salePrice).set(1234.1234);
+        System.out.println(line.getFieldValue(RECORD_DTAR020.qtySold).asHex());
+        System.out.println(line.getFieldValue(RECORD_DTAR020.salePrice).asHex());
+        byte[] value = line.getData();
+        writer.write(line);
+        writer.close();
+    }
+
+    public static final RecordDtar020 RECORD_DTAR020 = new RecordDtar020();
+
+
+
+    public static IFixedWidthIOBuilder newIoBuilder() {
+        RecordDtar020 r = RECORD_DTAR020;
+        return JRecordInterface1.FIXED_WIDTH.newIOBuilder()
+                .setFont("CP037")
+                .setFileOrganization(Constants.IO_FIXED_LENGTH)
+                .defineFieldsByLength()
+                .addFieldByLength(r.keycodeNo, Type.ftChar, 8, 0)
+                .addFieldByLength(r.storeNo, Type.ftPackedDecimal, 2, 0)
+                .addFieldByLength(r.date, Type.ftPackedDecimal, 4, 0)
+                .addFieldByLength(r.deptNo, Type.ftPackedDecimal, 2, 0)
+                .addFieldByLength(r.qtySold, Type.ftBinaryBigEndian, 4, 0)
+                .addFieldByLength(r.salePrice, Type.ftPackedDecimal, 6, 2)
+                .endOfRecord();
+    }
+
+    public static class RecordDtar020 {
+        public final String keycodeNo = "KEYCODE-NO";
+        public final String storeNo = "STORE-NO";
+        public final String date = "DATE";
+        public final String deptNo = "DEPT-NO";
+        public final String qtySold = "QTY-SOLD";
+        public final String salePrice = "SALE-PRICE";
+
+    }
+}
+
+	 */
 }
